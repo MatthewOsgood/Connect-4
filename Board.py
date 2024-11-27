@@ -100,7 +100,7 @@ class Board:
             if self.can_play(int(move)):
                 self.drop_piece(int(move))
             else:
-                print(f"Player {self.current_player()} failed to play in column {move}")
+                print(f"Player {self.current_player()} failed to play in column {move} on turn {self.moves}")
                 print(self)
                 return
 
