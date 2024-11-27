@@ -4,13 +4,13 @@ import numpy as np
 class Board:
     MAX = 1
     MIN = 2
-    def __init__(self, width=7, height=6):
-        self.width = width
-        self.height = height
-        self.board = np.zeros((height, width), dtype=np.int8)
+    def __init__(self):
+        self.width = 7
+        self.height = 6
+        self.board = np.zeros((self.height, self.width), dtype=np.int8)
         self.moves = 0
         # stores the height of the top piece in each column
-        self.heights = np.zeros(width, dtype=np.int8)
+        self.heights = np.zeros(self.width, dtype=np.int8)
     
     def copy(self, board):
         b = Board()

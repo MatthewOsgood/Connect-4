@@ -22,3 +22,8 @@ def negamax(board: Board, alpha, beta, max_depth=None):
                 return score
             alpha = max(score, alpha)
     return alpha
+
+def solve(board: Board):
+    beta = board.width * board.height // 2
+    alpha = -beta
+    return negamax(board, alpha, beta)
