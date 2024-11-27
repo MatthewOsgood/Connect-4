@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
 from Board import Board
+from Solver import solve
 
 
 class TestBoard(unittest.TestCase):
@@ -88,3 +89,30 @@ class TestBoard(unittest.TestCase):
         c4.play("666555544443433330")
         self.assertTrue(c4.is_winning_move(3))
         
+    def test_copy(self):
+        c4 = Board()
+        c4.drop_piece(0)
+        c4.drop_piece(1)
+        c4.drop_piece(2)
+        c4.drop_piece(3)
+        c4.drop_piece(4)
+        c4.drop_piece(5)
+        c4.drop_piece(6)
+        c4.drop_piece(0)
+        c4.drop_piece(0)
+        c4.drop_piece(0)
+        c4_copy = c4.copy()
+        self.assertEqual(c4.moves, c4_copy.moves)
+        np.testing.assert_array_equal(c4.board, c4_copy.board)
+        np.testing.assert_array_equal(c4.heights, c4_copy.heights)
+        c4.drop_piece(0)
+        self.assertNotEqual(c4.moves, c4_copy.moves)
+        self.assertNotEqual(c4.board.tolist(), c4_copy.board.tolist())
+        self.assertNotEqual(c4.heights.tolist(), c4_copy.heights.tolist())
+        
+    def test_solve(self):
+        c4 = Board()
+        c4.play("001122")
+        score, optimal_move = solve(c4)
+        self.assertEqual(optimal_move, 3)
+        print(score, optimal_move)

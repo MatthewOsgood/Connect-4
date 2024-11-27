@@ -6,6 +6,7 @@ class Board:
     MIN = 2
     WIDTH = 7
     HEIGHT = 6
+    SEARCH_ORDER = (3, 2, 4, 1, 5, 0, 6)
     def __init__(self):
         self.board = np.zeros((self.HEIGHT, self.WIDTH), dtype=np.int8)
         self.moves = 0
