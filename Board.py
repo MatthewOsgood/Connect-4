@@ -4,30 +4,29 @@ import numpy as np
 class Board:
     MAX = 1
     MIN = 2
+    WIDTH = 7
+    HEIGHT = 6
     def __init__(self):
-        self.width = 7
-        self.height = 6
-        self.board = np.zeros((self.height, self.width), dtype=np.int8)
+        self.board = np.zeros((self.HEIGHT, self.WIDTH), dtype=np.int8)
         self.moves = 0
         # stores the height of the top piece in each column
-        self.heights = np.zeros(self.width, dtype=np.int8)
+        self.heights = np.zeros(self.WIDTH, dtype=np.int8)
     
-    def copy(self, board):
+    def copy(self):
         b = Board()
-        b.width, b.height = self.width, self.height
         b.board = self.board.copy()
         b.moves = self.moves
-        b.height = self.heights.copy()
+        b.heights = self.heights.copy()
         return b
 
     def __str__(self):
         s = ""
-        for row in range(self.height - 1, -1, -1):
-            for col in range(self.width):
+        for row in range(self.HEIGHT - 1, -1, -1):
+            for col in range(self.WIDTH):
                 s += str(self.board[row][col]) + " "
             s += "\n"
-        s += "-" * (self.width * 2 - 1) + "\n"
-        for col in range(self.width):
+        s += "-" * (self.WIDTH * 2 - 1) + "\n"
+        for col in range(self.WIDTH):
             s += str(col) + " "
         s += "\n"
         for h in self.heights:
@@ -45,7 +44,7 @@ class Board:
         """
         return True if the column col is not full 
         """
-        return self.heights[col] < self.height
+        return self.heights[col] < self.HEIGHT
 
     def drop_piece(self, col):
         """
@@ -62,7 +61,7 @@ class Board:
         return True if the board is full. This means that the game is a draw
         :return:
         """
-        return self.moves == self.width * self.height
+        return self.moves == self.WIDTH * self.HEIGHT
 
     def is_winning_move(self, col) -> bool:
         """
@@ -75,19 +74,12 @@ class Board:
             self.board[row - 2][col] == self.current_player() and
             self.board[row - 3][col] == self.current_player()):
             return True
-        # check horizontal
-        # for c in range(max(0, col - 3), min(self.width - 3, col)):
-        #     if (self.board[row][c] == self.current_player and
-        #             self.board[row][c + 1] == self.current_player and
-        #             self.board[row][c + 2] == self.current_player and
-        #             self.board[row][c + 3] == self.current_player):
-        #         return True
         for dy in [-1, 0, 1]: # check negative slope diagonal, horizontal, positive slope diagonal
             nb = 0
             for dx in [-1, 1]: # check left and right
                 x = col + dx
                 y = row + dx * dy
-                while 0 <= x < self.width and 0 <= y < self.height and self.board[y][x] == self.current_player():
+                while 0 <= x < self.WIDTH and 0 <= y < self.HEIGHT and self.board[y][x] == self.current_player():
                     nb += 1
                     x += dx
                     y += dx * dy
