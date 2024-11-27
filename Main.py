@@ -10,4 +10,7 @@ def main():
     print(c4)
     score = solve(c4)
     print(score)
-    
+
+
+if __name__ == "__main__":
+    main()
