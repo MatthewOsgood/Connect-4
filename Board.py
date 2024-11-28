@@ -2,11 +2,19 @@ import numpy as np
 
 
 class Board:
-    MAX = 1
-    MIN = 2
+    MAX = np.int8(1)
+    MIN = np.int8(-1)
     WIDTH = 7
     HEIGHT = 6
     SEARCH_ORDER = (3, 2, 4, 1, 5, 0, 6)
+    HEURISTIC_TABLE = np.array(((0, 1, 2,  4, 2, 1, 0),
+                                (1, 3, 5,  7, 5, 3, 1),
+                                (2, 5, 8, 10, 8, 5, 2),
+                                (2, 5, 8, 10, 8, 5, 2),
+                                (1, 3, 5,  7, 5, 3, 1),
+                                (0, 1, 2,  4, 2, 1, 0)))
+    
+    
     def __init__(self):
         self.board = np.zeros((self.HEIGHT, self.WIDTH), dtype=np.int8)
         self.moves = 0
@@ -24,7 +32,8 @@ class Board:
         s = ""
         for row in range(self.HEIGHT - 1, -1, -1):
             for col in range(self.WIDTH):
-                s += str(self.board[row][col]) + " "
+                s += '2' if self.board[row][col] is  np.int8(-1) else str(self.board[row][col])
+                s += " "
             s += "\n"
         s += "-" * (self.WIDTH * 2 - 1) + "\n"
         for col in range(self.WIDTH):
@@ -91,13 +100,20 @@ class Board:
     def play(self, moves):
         for move in moves:
             if self.can_play(int(move)):
+                if self.is_winning_move(int(move)):
+                    self.drop_piece(int(move))
+                    print(f"Player {self.current_player()} won on turn {self.moves}")
+                    print(self)
+                    return
                 self.drop_piece(int(move))
             else:
                 print(f"Player {self.current_player()} failed to play in column {move} on turn {self.moves}")
                 print(self)
                 return
-
-
-if __name__ == "__main__":
-    c4 = Board()
-    print(c4)
+            
+    def heuristic_value(self):
+        """
+        calculates the heuristic value of this board for the current player
+        """
+        value = np.sum(self.board * self.HEURISTIC_TABLE)
+        return value

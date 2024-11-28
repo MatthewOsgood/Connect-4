@@ -1,7 +1,9 @@
 from Board import Board
 
-def negamax(b: Board, alpha, beta, max_depth=None) -> int:
+def negamax(b: Board, alpha, beta, depth=None) -> int:
     assert(alpha < beta)
+    if depth is not None and depth == 0:
+        return b.heuristic_value()
     if b.is_full():
         return 0
     for col in range(Board.WIDTH):
@@ -17,13 +19,13 @@ def negamax(b: Board, alpha, beta, max_depth=None) -> int:
         if b.can_play(col):
             b2: Board = b.copy()
             b2.drop_piece(col)
-            score = -negamax(b2, -beta, -alpha)
+            score = -negamax(b2, -beta, -alpha, depth=depth-1 if depth is not None else None)
             if score >= beta:
                 return score
             alpha = max(score, alpha)
     return alpha
 
-def solve(board: Board, max_depth=None):
+def solve(board: Board, depth=None):
     """
     :return the column with the best possible move
     """
@@ -32,5 +34,5 @@ def solve(board: Board, max_depth=None):
     boards = [(board.copy(), col) for col in Board.SEARCH_ORDER if board.can_play(col)]
     for b, col in boards:
         b.drop_piece(col)
-    scores = [(-negamax(b, alpha, beta, max_depth=max_depth), col) for b, col in boards]
+    scores = [(-negamax(b, alpha, beta, depth=depth), col) for b, col in boards]
     return max(scores, key=lambda x: x[0])
