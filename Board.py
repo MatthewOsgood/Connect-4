@@ -1,4 +1,5 @@
 import numpy as np
+from termcolor import colored
 
 
 class Board:
@@ -7,12 +8,12 @@ class Board:
     WIDTH = 7
     HEIGHT = 6
     SEARCH_ORDER = (3, 2, 4, 1, 5, 0, 6)
-    HEURISTIC_TABLE = np.array(((0, 1, 2,  4, 2, 1, 0),
-                                (1, 3, 5,  7, 5, 3, 1),
-                                (2, 5, 8, 10, 8, 5, 2),
-                                (2, 5, 8, 10, 8, 5, 2),
-                                (1, 3, 5,  7, 5, 3, 1),
-                                (0, 1, 2,  4, 2, 1, 0)))
+    HEURISTIC_TABLE = np.array(((3, 4, 5,  7,  5,  4, 3),
+	                            (4, 6, 8,  10, 8,  6, 4),
+	                            (5, 8, 11, 13, 11, 8, 5),
+	                            (5, 8, 11, 13, 11, 8, 5),
+	                            (4, 6, 8,  10, 8,  6, 4),
+	                            (3, 4, 5,  7,  5,  4, 3))) / 6 # scale down to fit with minimax score based on how many moves required to win
     
     
     def __init__(self):
@@ -32,16 +33,17 @@ class Board:
         s = ""
         for row in range(self.HEIGHT - 1, -1, -1):
             for col in range(self.WIDTH):
-                s += '2' if self.board[row][col] is  np.int8(-1) else str(self.board[row][col])
+                if self.board[row][col] == 0:
+                    s += "0"
+                elif self.board[row][col] == Board.MAX:
+                    s += colored('1', "red")
+                else:
+                    s += colored('2', "yellow")
                 s += " "
             s += "\n"
         s += "-" * (self.WIDTH * 2 - 1) + "\n"
         for col in range(self.WIDTH):
             s += str(col) + " "
-        s += "\n"
-        for h in self.heights:
-            s += str(h) + " "
-        s += "h"
         return s
 
     def current_player(self):
@@ -98,22 +100,26 @@ class Board:
         return False
     
     def play(self, moves):
+        """
+        play the moves in the string moves
+        :param moves: a string of integers 
+        :return: if the piece was played, and the result (0 for no change, -1 for min win, 1 for max win)
+        """
         for move in moves:
             if self.can_play(int(move)):
                 if self.is_winning_move(int(move)):
+                    winner = self.current_player()
                     self.drop_piece(int(move))
-                    print(f"Player {self.current_player()} won on turn {self.moves}")
-                    print(self)
-                    return
+                    return True, winner
                 self.drop_piece(int(move))
             else:
-                print(f"Player {self.current_player()} failed to play in column {move} on turn {self.moves}")
-                print(self)
-                return
+                print(colored(f"Player {self.current_player()} failed to play in column {move} on turn {self.moves}", "red"))
+                return False, 0
+        return True, 0
             
     def heuristic_value(self):
         """
         calculates the heuristic value of this board for the current player
         """
-        value = np.sum(self.board * self.HEURISTIC_TABLE)
-        return value
+        return np.sum(self.HEURISTIC_TABLE * self.board)
+    

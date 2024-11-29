@@ -1,14 +1,13 @@
 from Board import Board
 
 def negamax(b: Board, alpha, beta, depth=None) -> int:
-    assert(alpha < beta)
     if depth is not None and depth == 0:
         return b.heuristic_value()
     if b.is_full():
         return 0
     for col in range(Board.WIDTH):
         if b.can_play(col) and b.is_winning_move(col):
-            return (Board.WIDTH * Board.HEIGHT + 1 - b.moves) // 2
+            return (100 - b.moves)
     
     max_score = (Board.WIDTH * Board.HEIGHT - 1 - b.moves) // 2
     if beta > max_score:
