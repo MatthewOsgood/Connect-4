@@ -30,6 +30,9 @@ def solve(board: Board, depth=None):
     """
     alpha = -(board.WIDTH * board.HEIGHT // 2)
     beta = -alpha
+    for col in range(Board.WIDTH):
+        if board.can_play(col) and board.is_winning_move(col):
+            return 100, col
     boards = [(board.copy(), col) for col in Board.SEARCH_ORDER if board.can_play(col)]
     for b, col in boards:
         b.drop_piece(col)
