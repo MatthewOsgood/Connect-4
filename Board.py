@@ -14,6 +14,7 @@ class Board:
 	                            (5, 8, 11, 13, 11, 8, 5),
 	                            (4, 6, 8,  10, 8,  6, 4),
 	                            (3, 4, 5,  7,  5,  4, 3))) / 6 # scale down to fit with minimax score based on how many moves required to win
+    MIN_SCORE = -(WIDTH * HEIGHT // 2) + 3
     
     
     def __init__(self):

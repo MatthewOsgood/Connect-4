@@ -1,3 +1,4 @@
+import time
 import numpy as np
 from Board import Board
 from Solver import solve
@@ -5,11 +6,16 @@ from termcolor import colored
 
 
 def main():
-    depth = int(input("Enter difficulty from 1-10: "))
-    if not 1 <= depth <= 10:
-        print("Invalid difficulty")
+    difficulty = input("Enter difficulty easy (e), medium (m), or hard (h): ")
+    if difficulty is "e":
+        depth = 4
+    elif difficulty is "m":
+        depth = 7
+    elif difficulty is "h":
+        depth = 11
+    else:
+        print(colored("Invalid difficulty. Must be 'e', 'm', or 'h'", "red"))
         return
-    
     c4 = Board()
     print(c4)
     while True:
@@ -21,9 +27,11 @@ def main():
         if result:
             print(colored(f"Player {result} won!", "green"))
             return
+        start_time = time.time()
         score, col = solve(c4, depth=depth)
         print("score: ", score)
         print("optimal move: ", col)
+        print(f"Time taken: {time.time() - start_time}")
         was_played, result = c4.play(str(col))
         print(c4)
         if not was_played:
