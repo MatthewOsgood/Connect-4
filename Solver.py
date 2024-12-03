@@ -1,6 +1,6 @@
 from Board import Board
 from cachetools import LRUCache
-from numpy import random
+from random import random, randint
 
 
 def negamax(b: Board, alpha: int, beta: int, transposition_table: LRUCache, depth=9999) -> int:
@@ -52,8 +52,8 @@ def solve(board: Board, tt: LRUCache, depth=9999, random_move_chance=0):
         if board.can_play(col) and board.is_winning_move(col):
             return 100, col
     boards = [(board.copy(), col) for col in Board.SEARCH_ORDER if board.can_play(col)]
-    if random.random() <= random_move_chance:
-        return 0, random.choice(board)[1]
+    if random() <= random_move_chance:
+        return 0, boards[randint(0, len(boards)-1)][1]
     
     for b, col in boards:
         b.drop_piece(col)
