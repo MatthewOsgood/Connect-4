@@ -4,7 +4,7 @@ from termcolor import colored
 
 class Board:
     MAX = np.int8(1)
-    MIN = np.int8(-1)
+    MIN = np.int8(2)
     WIDTH = 7
     HEIGHT = 6
     SEARCH_ORDER = (3, 2, 4, 1, 5, 0, 6)
@@ -24,6 +24,9 @@ class Board:
         self.heights = np.zeros(self.WIDTH, dtype=np.int8)
     
     def copy(self):
+        """
+        :return: a deep copy of this board
+        """
         b = Board()
         b.board = self.board.copy()
         b.moves = self.moves
@@ -43,19 +46,19 @@ class Board:
                 s += " "
             s += "\n"
         s += "-" * (self.WIDTH * 2 - 1) + "\n"
-        for col in range(self.WIDTH):
+        for col in range(1, self.WIDTH + 1):
             s += str(col) + " "
         return s
 
     def current_player(self):
         """
-        return the current player
+        :return: the current player
         """
         return self.moves % 2 + 1
     
     def can_play(self, col) -> bool:
         """
-        return True if the column col is not full 
+        :return: True if the column col is not full
         """
         return self.heights[col] < self.HEIGHT
 
@@ -63,7 +66,7 @@ class Board:
         """
         drop a piece in column col. The piece will be placed in the lowest available row in that column
         assumes that the column is not full
-        :param col: the column to place the piece ranges from 0 to width - 1
+        :param col: the column to place the piece ranges from 0 to 6
         """
         self.board[self.heights[col]][col] = self.current_player()
         self.heights[col] += 1
@@ -118,9 +121,15 @@ class Board:
                 return False, 0
         return True, 0
             
-    def heuristic_value(self):
+    def heuristic_value(self) -> int:
         """
         calculates the heuristic value of this board for the current player
         """
-        return np.sum(self.HEURISTIC_TABLE * self.board)
-    
+        value = 0
+        for row in range(self.HEIGHT):
+            for col in range(self.WIDTH):
+                if self.board[row][col] == self.current_player():
+                    value += self.HEURISTIC_TABLE[row][col]
+                else:
+                    value -= self.HEURISTIC_TABLE[row][col]
+        return value

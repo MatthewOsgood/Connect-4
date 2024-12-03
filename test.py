@@ -1,5 +1,7 @@
 import unittest
 import numpy as np
+from cachetools import LRUCache
+
 from Board import Board
 from Solver import solve
 
@@ -9,20 +11,17 @@ class TestBoard(unittest.TestCase):
     def test_drop_piece(self):
         c4 = Board()
         c4.drop_piece(0)
-        self.assertEqual(c4.board[1][0], Board.MAX)
+        self.assertEqual(c4.board[0][0], Board.MAX)
         c4.drop_piece(0)
-        self.assertEqual(c4.board[2][0], Board.MIN)
-        c4.drop_piece(0)
-        self.assertEqual(c4.board[1][0], Board.MAX)
-        c4.drop_piece(0)
-        self.assertEqual(c4.board[2][0], Board.MIN)
-        c4.drop_piece(0)
-        self.assertEqual(c4.board[1][0], Board.MAX)
-        c4.drop_piece(0)
-        self.assertEqual(c4.board[2][0])
-        expected_board = np.zeros((6, 7), dtype=np.int8)
-        expected_board[:, 0] = [1, 2, 1, 2, 1, 2]
-        np.testing.assert_array_equal(c4.board, expected_board)
+        self.assertEqual(c4.board[1][0], Board.MIN)
+        c4.drop_piece(1)
+        self.assertEqual(c4.board[0][1], Board.MAX)
+        c4.drop_piece(1)
+        self.assertEqual(c4.board[1][1], Board.MIN)
+        c4.drop_piece(2)
+        self.assertEqual(c4.board[0][2], Board.MAX)
+        c4.drop_piece(2)
+        self.assertEqual(c4.board[1][2], Board.MIN)
         
     def test_current_player(self):
         c4 = Board()
@@ -35,8 +34,8 @@ class TestBoard(unittest.TestCase):
     def test_can_play(self):
         c4 = Board()
         self.assertTrue(c4.can_play(0))
-        self.assertTrue(c4.can_play(c4.width - 1))
-        for i in range(c4.height):
+        self.assertTrue(c4.can_play(Board.WIDTH - 1))
+        for i in range(Board.HEIGHT):
             self.assertTrue(c4.can_play(0))
             c4.drop_piece(0)
         self.assertFalse(c4.can_play(0))
@@ -44,8 +43,8 @@ class TestBoard(unittest.TestCase):
     def test_is_full(self):
         c4 = Board()
         self.assertFalse(c4.is_full())
-        for i in range(c4.width):
-            for j in range(c4.height):
+        for i in range(Board.WIDTH):
+            for j in range(Board.HEIGHT):
                 if c4.can_play(i):
                     c4.drop_piece(i)
         self.assertTrue(c4.is_full())
@@ -113,6 +112,7 @@ class TestBoard(unittest.TestCase):
     def test_solve(self):
         c4 = Board()
         c4.play("001122")
-        score, optimal_move = solve(c4)
+        tt = LRUCache(maxsize=1000000)
+        score, optimal_move = solve(c4, tt, depth=4, random_move_chance=0)
         self.assertEqual(optimal_move, 3)
         print(score, optimal_move)
