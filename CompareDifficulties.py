@@ -4,13 +4,15 @@ from Board import Board
 from Solver import solve
 
 
-def compare_difficulties(depth1, random_move_chance1, depth2, random_move_chance2, tt: LRUCache):
+def compare_difficulties(depth1, random_move_chance1, depth2, random_move_chance2):
+    tt1 = LRUCache(maxsize=1000000)
+    tt2 = LRUCache(maxsize=1000000)
     p1_wins = 0
     p1_losses = 0
-    for _ in range(10):
+    for _ in range(20):
         c4 = Board()
         while True:
-            score, col = solve(c4, tt, depth=depth1, random_move_chance=random_move_chance1)
+            score, col = solve(c4, tt1, depth=depth1, random_move_chance=random_move_chance1)
             was_played, result = c4.play(str(col))
             if not was_played:
                 Exception("AI made invalid move")
@@ -20,7 +22,7 @@ def compare_difficulties(depth1, random_move_chance1, depth2, random_move_chance
             if result == Board.MIN:
                 p1_losses += 1
                 break
-            score, col = solve(c4, tt, depth=depth2, random_move_chance=random_move_chance2)
+            score, col = solve(c4, tt2, depth=depth2, random_move_chance=random_move_chance2)
             was_played, result = c4.play(str(col))
             if not was_played:
                 Exception("AI made invalid move")
@@ -36,13 +38,18 @@ def compare_difficulties(depth1, random_move_chance1, depth2, random_move_chance
 
 
 def main():
-    tt = LRUCache(maxsize=1000000) # always use same transposition table to speed things up
-    p1_wins, p1_losses = compare_difficulties(7, .1, 4, .3, tt)
-    print(f"M vs E wins: {p1_wins}, losses: {p1_losses}")
-    p1_wins, p1_losses = compare_difficulties(11, 0, 4, .3, tt)
-    print(f"H vs E wins: {p1_wins}, p1 losses: {p1_losses}")
-    p1_wins, p1_losses = compare_difficulties(11, 0, 7, .1, tt)
-    print(f"H vs M wins: {p1_wins}, losses: {p1_losses}")
+    with open("results.txt", "w") as f:
+        p1_wins, p1_losses = compare_difficulties(7, .1, 4, .3)
+        print(f"M vs E wins: {p1_wins}, losses: {p1_losses}")
+        f.write(f"M vs E wins: {p1_wins}, losses: {p1_losses}\n")
+
+        p1_wins, p1_losses = compare_difficulties(11, 0, 4, .3)
+        print(f"H vs E wins: {p1_wins}, losses: {p1_losses}")
+        f.write(f"H vs E wins: {p1_wins}, losses: {p1_losses}\n")
+
+        p1_wins, p1_losses = compare_difficulties(11, 0, 7, .1)
+        print(f"H vs M wins: {p1_wins}, losses: {p1_losses}")
+        f.write(f"H vs M wins: {p1_wins}, losses: {p1_losses}\n")
 
 
 

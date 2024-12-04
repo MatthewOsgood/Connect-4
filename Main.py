@@ -35,6 +35,10 @@ def main():
         if result:
             print(colored(f"Player {result} won!", "green"))
             return
+        print("moves: ", c4.moves)
+        if difficulty == "h" and c4.moves >= 11:
+            depth += 1
+        print("depth: ", depth)
         start_time = time.time()
         score, col = solve(c4, tt, depth=depth, random_move_chance=random_move_chance)
         print("score: ", score)
