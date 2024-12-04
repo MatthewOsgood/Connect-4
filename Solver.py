@@ -50,7 +50,7 @@ def solve(board: Board, tt: LRUCache, depth=9999, random_move_chance=0):
     beta = -alpha
     for col in range(Board.WIDTH):
         if board.can_play(col) and board.is_winning_move(col):
-            return 100, col
+            return 100, col # using 100 as a placeholder
     boards = [(board.copy(), col) for col in Board.SEARCH_ORDER if board.can_play(col)]
     if random() <= random_move_chance:
         return 0, boards[randint(0, len(boards)-1)][1]
