@@ -1,0 +1,3 @@
+M vs E wins: 17, losses: 3
+H vs E wins: 18, losses: 0
+H vs M wins: 19, losses: 1
